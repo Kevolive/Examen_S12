@@ -75,4 +75,4 @@ if not filtro_df.empty:
     st.metric("Total en ventas:", f"${total_sales:,.2f}")
     st.metric("Promedio de precios:", f"${avg_price:,.2f}")
 else:
-    st.write("No hay datos para los filtros seleccionados.")
+    st.write("No hay datos para los filtros seleccionados...")
