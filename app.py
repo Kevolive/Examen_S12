@@ -71,9 +71,49 @@ if not filtro_df.empty:
     # TODO: Calcula el total de ventas y el precio promedio
     total_sales = filtro_df["Total_Sales"].sum()
     avg_price = filtro_df["Price"].mean()
-
+    
     # TODO: Muestra las estadísticas con st.metric
     st.metric("Total en ventas:", f"${total_sales:,.2f}")
     st.metric("Promedio de precios:", f"${avg_price:,.2f}")
 else:
     st.write("No hay datos para los filtros seleccionados...")
+
+
+st.subheader("---------------------------------------")
+st.subheader("Agregar Nuevo Artículo")
+
+with st.form("form_agregar"):
+    new_date = st.date_input("Fecha de venta")
+    new_product = st.text_input("Producto")
+    new_category = st.selectbox("Categoría", options=["Electronics", "Accessories"])
+    new_price = st.number_input("Precio", min_value=0.0, format="%.2f")
+    new_quantity = st.number_input("Cantidad", min_value=1, step=1)
+
+    submitted = st.form_submit_button("Agregar artículo")
+
+    if submitted:
+        # Crear nueva fila como DataFrame
+        nueva_fila = pd.DataFrame({
+            "Date": [new_date],
+            "Product": [new_product],
+            "Category": [new_category],
+            "Price": [new_price],
+            "Quantity": [new_quantity],
+        })
+
+        nueva_fila["Total_Sales"] = nueva_fila["Price"] * nueva_fila["Quantity"]
+
+        # Agregar a df existente
+        df = pd.concat([df, nueva_fila], ignore_index=True)
+
+        # Guardar en CSV
+        df.to_csv("sales_data.csv", index=False)
+
+        st.success("Artículo agregado correctamente.")
+        st.dataframe(df.tail(5))  # Mostrar las últimas filas actualizadas
+
+        if st.sidebar.button("🔄 Reiniciar datos"):
+         df = pd.DataFrame(data)
+        df.to_csv("sales_data.csv", index=False)
+        st.success("Datos reiniciados.")
+
